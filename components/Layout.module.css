@@ -74,7 +74,7 @@ header.header {
 }
 
 .content {
-  margin: 0 auto;
+  margin: 0 auto 10px auto;
 }
 
 @media only screen and (max-width: 1010px) {
@@ -88,7 +88,7 @@ header.header {
 
   div.content {
     width: auto;
-    margin: 0 10px;
+    margin: 0 10px 10px 10px;
   }
 
   .header .mainTitle {
