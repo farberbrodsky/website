@@ -1,0 +1,210 @@
+﻿---
+layout: "post"
+title: An Introduction to the JS Canvas
+description: For JavaScript Beginners
+date: "2019-09-07T00:00:00.000Z"
+---
+
+## Prerequisites:
+
+This tutorial is made for beginners. It's enough if you know that `let` is the block scope `var` and you know how to use `const`.
+
+### Who this is for
+
+Most of your webapps so far probably consisted of getting inputs from elements, listening to button presses, modifying texts, and maybe even making new elements. This quick tutorial will teach you how to make graphics in JS starting with basic shapes, but the possibilities are endless!
+
+## The &lt;canvas&gt; element
+
+The canvas element (from now on just called canvas) is the only element that can be drawn on. Before you draw on a canvas, it's completely transparent. The default size for a canvas is 300 by 150 pixels. This size can be changed with the `width` and `height` attributes.
+
+**Note:** you can scale a canvas with CSS, but if the aspect ratio (ratio between width and height) is different, the image will stretch.
+
+**Note:** As of the time of writing, [98.9% of browsers support canvas](https://caniuse.com/#feat=canvas), so you shouldn't worry about compatibility because that's as common as [CSS3 Box-sizing](https://caniuse.com/#feat=css3-boxsizing).
+
+## Setting everything up
+
+To draw on a canvas, first get a reference to that canvas in the JS. The simplest and most common way to do so is using [`document.getElementById('id')`](https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById) which returns the element that has that specific `id` attribute.
+
+index.html
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Canvas Tutorial</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <canvas id="my-first-canvas" width="480" height="270"></canvas>
+    <script src="script.js"></script>
+  </body>
+</html>
+```
+**Note:** &lt;canvas&gt; tags must be closed.
+
+style.css
+```css
+body {
+  margin: 0;
+}
+```
+script.js
+```js
+const canvas = document.getElementById('my-first-canvas')
+```
+
+You can [fork this super minimalist starter on Repl.it](https://repl.it/@liltaco/Canvas-Tutorial-Starter) if you want to save the hassle of copying and pasting this yourself. All following snippets only apply to the JS; the HTML and CSS will stay the same.
+
+
+## The rendering context
+
+The canvas element is just an element. In order to draw on it, you need to get a *rendering context*. Rendering contexts are the ways you can draw on a canvas. Currently, these are [`CanvasRenderingContext2D`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) and [`WebGLRenderingContext`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext). 2D is the simplest to work with; it gives you functions for all kinds of shapes, texts and images. The main drawback of the 2D rendering context is that it runs on the CPU and not on the GPU, so it's much slower than WebGL. WebGL is a port of OpenGL ES 2.0 (a low-level graphics library) to the web that allows advanced graphics on the GPU. However, it's very complicated to use without libraries. This tutorial will only use the 2D rendering context.
+
+To get the 2D rendering context, just type:
+```js
+const ctx = canvas.getContext('2d')
+```
+
+## Drawing
+
+Now that you have your rendering context, you can draw your very first rectangle:
+```js
+ctx.fillRect(0, 10, 50, 100)
+```
+`ctx.fillRect` accepts 4 parameters: `x, y, width, height`. The line `ctx.fillRect(0, 0, 50, 100)` will fill a rectangle with a width of 50 and a height of 100 with its top-left corner at `x = 0` and `y = 10`.
+
+The position `x: 0, y: 0` is at the top-left corner, so a higher X value goes to the right and a higher Y value goes downwards.
+
+**Note:** Everything you draw on a canvas will stick around until you either draw something on top of it or change the `width` and `height` attributes.
+
+### Colors
+
+Colors in the 2D rendering context can be any CSS color, so you can write them hexadecimal, `rgb(1, 2, 3)`, `hsl(120, 100%, 50%)`, `rgba`, `hsla`, and conveniently you can use a [color keyword](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#Color_keywords).
+
+Now, let's apply color to the rectangle.
+
+There's [`ctx.fillStyle`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle) which is the color for filled shapes and [`ctx.strokeStyle`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle) for the color of the outlined shapes. Once you set the color, everything you draw will be drawn in that color until you change it.
+
+```js
+ctx.fillStyle = 'red'
+ctx.fillRect(0, 10, 50, 100)
+
+ctx.strokeStyle = 'blue'
+ctx.strokeRect(10, 20, 50, 75) // x, y, width, height
+```
+![Result of the previous code snippet](https://thepracticaldev.s3.amazonaws.com/i/i0yb50xollw0b7xdhupr.png)
+
+Creating abstract art has never been easier!
+
+In addition to `fillRect` and `strokeRect`, there's also [`clearRect`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clearRect). clearRect also gets `x, y, width, height` parameters, but clearRect will make everything inside of the rectangle transparent. If you want to clear the whole canvas, you can also do `canvas.width = canvas.width` or `canvas.height = canvas.height` because setting the canvas size will clear it too.
+
+## Advanced shapes
+
+A path is a list of lines, which can be straight or curved. Once you have created a path, you call [`ctx.fill()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fill) or [`ctx.stroke()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/stroke) or even both to draw the path on the canvas.
+
+### Essential functions:
+
+* [`ctx.beginPath()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/beginPath) resets the path, always run this before drawing something so it won't get mixed up with what you just drew.
+* [`ctx.moveTo(x, y)`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/moveTo) 'raises' the path pen and moves it to a position.
+* [`ctx.lineTo(x, y)`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineTo) will move the path pen to the given point in a straight line.
+* [`ctx.closePath()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/closePath) moves the path pen from the last point to the first point in a straight line.
+
+If you want to draw curved lines or do something more advanced like path clipping, you can see the [complete list of path methods](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D#Paths) from MDN.
+
+Now, let's draw our first triangle!
+
+```js
+ctx.fillStyle = 'red'
+ctx.fillRect(0, 10, 50, 100)
+
+ctx.strokeStyle = 'blue'
+ctx.strokeRect(10, 20, 50, 75)
+
+ctx.beginPath()    // reset the path
+ctx.moveTo(60, 20) // raise the pen to x = 60 and y = 20
+ctx.lineTo(20, 50) // move the pen in a straight line to x = 20 and y = 50
+ctx.lineTo(60, 80) // move the pen in a straight line to x = 60 and y = 80
+ctx.closePath()    // move the pen back to the starting position of x = 60 and y = 20
+
+// Note: when using ctx.fill(), ctx.closePath() is not required;
+// if the path wasn't a closed one, ctx.fill() will draw it the same.
+// However, ctx.stroke() will not.
+
+ctx.fillStyle = 'green'
+ctx.fill()
+ctx.strokeStyle = 'blue'
+ctx.lineWidth = 3
+// ctx.lineWidth will decide how thick the outline is when running ctx.stroke()
+ctx.stroke()
+```
+![Result of the previous code snippet](https://thepracticaldev.s3.amazonaws.com/i/0wkzglh7oeil8vvef7t3.png)
+It's coming together!
+
+## Common Shapes
+
+### Circle
+
+There is no `ctx.circle` function, but there are 2 main ways to draw circles in the canvas.
+
+1. [`ctx.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle)`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/ellipse) - as of writing this, it isn't supported on the Android webview which is an issue. That's why I usually use:
+2. [`ctx.arc(x, y, radius, 0, Math.PI * 2)`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc) - the 0 and the Math.PI * 2 are the startAngle and endAngle.
+
+Here are some circles you can play around with:
+
+{% replit @liltaco/Canvas-Tutorial-Circles %}
+
+### Rounded Rectangles
+
+There is no `ctx.roundedRect()` function, but you can use this modified snippet from MDN:
+
+```javascript
+CanvasRenderingContext2D.prototype.roundedRect = function (x, y, width, height, radius) {
+  this.moveTo(x, y + radius);
+  this.lineTo(x, y + height - radius);
+  this.arcTo(x, y + height, x + radius, y + height, radius);
+  this.lineTo(x + width - radius, y + height);
+  this.arcTo(x + width, y + height, x + width, y + height-radius, radius);
+  this.lineTo(x + width, y + radius);
+  this.arcTo(x + width, y, x + width - radius, y, radius);
+  this.lineTo(x + radius, y);
+  this.arcTo(x, y, x, y + radius, radius);
+}
+```
+
+Just add this to the beginning of your code and every 2D rendering context will have the `ctx.roundedRect` method. ([`Object.prototype`](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes) is basically a way to give every instance a new method).
+
+## Transformations
+
+Sometimes, you may want to scale, move, or rotate everything you draw on the canvas.
+
+* [`ctx.save()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/save) pushes the current transformation state
+* [`ctx.restore()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/restore) pops the previous transformation state
+* [`ctx.translate(x, y)`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/translate) moves the canvas origin `x` units to the right and `y` units down. Everything you draw will be moved that much.
+* [`ctx.scale(x, y)`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/scale) multiplies every unit by `x` and `y`; if it's less than 1 it scales everything down and if it's more than 1 it scales everything up.
+* [`ctx.rotate(angle)`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/rotate) rotates everything you draw from now on by `angle` radians.
+
+### Transformation order matters!
+
+If you do `ctx.scale(2, 2)` and then `ctx.translate(10, 10)`, then everything will be translated 20 units by the original scale, but if you do `ctx.translate(10, 10)` and then `ctx.scale(2, 2)` everything will be translated 10 units by the original scale. The same applies for rotation too.
+
+### Transformations stack!
+If you run `ctx.scale(1.1, 1.1)` then `ctx.scale(1.1, 1.1)` again will scale everything up by 21%. Each transformation will stack up on the previous transformation state the same as it would on an empty transformation state.
+
+Try my [Transformation Playground](https://canvas-tutorial-transformations-playground.liltaco.repl.co/) to learn by doing.
+
+## Final Notes
+
+You generally can't put elements inside of a canvas since they aren't shown, but if a user has an ancient browser like Internet Explorer 8 from 2009, any elements inside the canvas will be visible. Therefore you can place some content describing what should be on the canvas in there or just say "Your browser doesn't support canvas" as fallback.
+
+If you want to draw on top of another element, just place the canvas on top of it with CSS, then draw on the canvas (remember that a canvas is transparent by default).
+
+Another useful tip is that if you want to draw in layers, i.e. not erase the background when erasing an overlay (useful for games where backgrounds are mostly static but need to be drawn), you can place a canvas on top of another canvas with CSS.
+
+## That's it for this tutorial!
+
+Here are some pointers that you should read through:
+
+* [MDN tutorial on drawing text](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_text#Drawing_text)
+* [MDN tutorial on drawing images](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Using_images)
+

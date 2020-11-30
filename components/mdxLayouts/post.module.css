@@ -4,6 +4,10 @@
   line-height: 1.3;
 }
 
+.post p, .post h1, .post h2, .post h3 {
+  margin: 12px 0;
+}
+
 .post h1 {
   font-size: 40px;
   font-weight: bold;
@@ -30,3 +34,21 @@
   border-radius: 0 6px 6px 0;
 }
 
+.post code {
+  background: #f8f8f8;
+  font-family: 'Fira Code', monospace;
+}
+
+.post pre code {
+  background: none; /* The previous should not apply to code blocks */
+}
+
+.post strong {
+  font-weight: bold;
+}
+
+.post a {
+  color: #7E57C2;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
