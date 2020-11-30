@@ -3,7 +3,7 @@ import { frontMatter as posts } from "./posts/*.mdx";
 import PostSummary from '../components/PostSummary';
 
 export default function Home() {
-  const sortedPosts = posts.sort((a, b) => b.date - a.date);
+  const sortedPosts = posts.sort((a, b) => a.date - b.date);
   return (
     <div>
       <Layout>
